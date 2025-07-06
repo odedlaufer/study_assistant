@@ -1,4 +1,5 @@
 import os
+
 from fastapi import HTTPException
 
 NOTES_DIR = "app/storage/notes"
@@ -10,5 +11,5 @@ def get_note_text(note_id: str) -> str:
     if not os.path.exists(text_path):
         raise HTTPException(status_code=404, detail="Note not found.")
 
-    with open(text_path, 'r', encoding='utf-8') as f:
+    with open(text_path, "r", encoding="utf-8") as f:
         return f.read()

@@ -1,13 +1,13 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
-from uuid import uuid4
 import os
 import shutil
-from .services import parser, summarizer, flashcards, quiz
-from .utils.file_helpers import get_note_text
-from .schemas.quiz import QuizSubmission
-from .utils.cache import get_cached, save_cache
-from .utils.response_cache import get_or_generate
+from uuid import uuid4
 
+from fastapi import APIRouter, File, HTTPException, UploadFile
+
+from .schemas.quiz import QuizSubmission
+from .services import flashcards, parser, quiz, summarizer
+from .utils.file_helpers import get_note_text
+from .utils.response_cache import get_or_generate
 
 router = APIRouter()
 
@@ -22,12 +22,12 @@ async def upload_file(file: UploadFile = File(...)):
     note_id = str(uuid4())
     file_path = os.path.join(NOTES_DIR, f"{note_id}_{file.filename}")
 
-    with open(file_path, 'wb') as buffer:
+    with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
     parsed_text = parser.extract_text(file_path)
 
-    with open(os.path.join(NOTES_DIR, f"{note_id}.txt"), 'w', encoding='utf-8') as f:
+    with open(os.path.join(NOTES_DIR, f"{note_id}.txt"), "w", encoding="utf-8") as f:
         f.write(parsed_text)
 
     return {"note_id": note_id, "message": "File uploaded and processed."}
@@ -66,22 +66,24 @@ def check_quiz(submission: QuizSubmission):
         if correct_answer is None:
             raise HTTPException(
                 status_code=400,
-                detail=f"Question not found in generated quiz: '{answer.question}"
+                detail=f"Question not found in generated quiz: '{answer.question}",
             )
- 
+
         is_correct = answer.selected.strip() == correct_answer.strip()  # type: ignore
         if is_correct:
             correct_count += 1
-     
-        results.append({
-            "question": answer.question,
-            "selected": answer.selected,
-            "correct": is_correct,
-            "answer": correct_answer
-        })
+
+        results.append(
+            {
+                "question": answer.question,
+                "selected": answer.selected,
+                "correct": is_correct,
+                "answer": correct_answer,
+            }
+        )
 
     return {
         "note_id": submission.note_id,
         "results": results,
-        "score": f"{correct_count}/{len(submission.answers)}"
+        "score": f"{correct_count}/{len(submission.answers)}",
     }
