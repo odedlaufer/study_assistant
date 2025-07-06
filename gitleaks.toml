@@ -1,0 +1,9 @@
+title = "Gitleaks config"
+
+[allowlist]
+description = "Paths to ignore like venv"
+paths = [
+    "venv/.*",
+    ".venv/.*",
+    "site-packages/.*"
+]

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# Logs / Misc
+*.log
+.cache/
+
+# Ignore generated data and test files
+app/storage/cache/
+app/storage/notes/
+test_notes.txt

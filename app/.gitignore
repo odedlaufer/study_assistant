@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+
+# VSCode
+.vscode/
+
+# Logs and caches
+*.log
+.mypy_cache/
+.cache/
+*.sqlite3
+
+# macOS
+.DS_Store
