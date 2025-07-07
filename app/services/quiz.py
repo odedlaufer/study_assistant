@@ -1,15 +1,18 @@
 import random
-from transformers import pipeline
 from difflib import SequenceMatcher
+
+from transformers import pipeline
 
 paraphrase_model = pipeline(
     "text2text-generation",
     model="Vamsi/T5_Paraphrase_Paws",
-    tokenizer="Vamsi/T5_Paraphrase_Paws"
+    tokenizer="Vamsi/T5_Paraphrase_Paws",
 )
+
 
 def is_similar(a, b, threshold=0.9):
     return SequenceMatcher(None, a.lower(), b.lower()).ratio() > threshold
+
 
 def generate_quiz(text: str, num_questions: int = 3):
     sentences = [s.strip() for s in text.split(".") if len(s.strip()) > 20]
@@ -25,7 +28,7 @@ def generate_quiz(text: str, num_questions: int = 3):
             num_return_sequences=4,
             do_sample=True,
             top_k=50,
-            top_p=0.95
+            top_p=0.95,
         )
 
         paraphrases = [
@@ -44,20 +47,26 @@ def generate_quiz(text: str, num_questions: int = 3):
 
         # Pad with generic wrong answers if needed
         while len(distractors) < 2:
-            distractors.append(random.choice([
-                "It is a JavaScript compiler.",
-                "It is used for database migration.",
-                "It is a CSS framework for styling.",
-                "It is a mobile app deployment tool."
-            ]))
+            distractors.append(
+                random.choice(
+                    [
+                        "It is a JavaScript compiler.",
+                        "It is used for database migration.",
+                        "It is a CSS framework for styling.",
+                        "It is a mobile app deployment tool.",
+                    ]
+                )
+            )
 
         options = distractors + [correct]
         random.shuffle(options)
 
-        quiz.append({
-            "question": f"What does this mean? \"{original}\"",
-            "options": options,
-            "answer": correct
-        })
+        quiz.append(
+            {
+                "question": f'What does this mean? "{original}"',
+                "options": options,
+                "answer": correct,
+            }
+        )
 
     return quiz
